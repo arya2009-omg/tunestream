@@ -359,8 +359,27 @@ let notificationChannel=null;
 window.notificationsPage=async function(){
  currentPage='notifications';setActive(null);const el=document.getElementById('content');
  if(!TuneStreamCloud.enabled())return el.innerHTML='<div class="empty">Login to see notifications.</div>';
- el.innerHTML='<div class="section-head"><h2>Notifications</h2><button class="secondary" onclick="notificationsPage()">Refresh</button></div><div id="notificationsList"><div class="empty">Loading…</div></div>';
- try{const n=await TuneStreamCloud.notifications();document.getElementById('notificationsList').innerHTML=n.length?n.map(x=>'<div class="activity-card" onclick="TuneStreamCloud.markNotificationRead(\''+x.id+'\');this.style.opacity=.55"><div class="activity-avatar">'+(x.read?'✓':'•')+'</div><div><b>'+esc(x.message)+'</b><small class="muted" style="display:block">'+new Date(x.created_at).toLocaleString()+'</small></div></div>').join(''):'<div class="notice">No notifications yet.</div>'}catch(e){document.getElementById('notificationsList').innerHTML='<div class="empty">'+esc(e.message)+'</div>'}
+ el.innerHTML='<div class="section-head"><div><h2>Notifications</h2><span class="muted">Friend requests and account activity</span></div><button class="secondary" onclick="notificationsPage()">↻ Refresh</button></div><div id="notificationsList"><div class="empty">Loading…</div></div>';
+ try{
+  const n=await TuneStreamCloud.notifications();
+  const fs=await TuneStreamCloud.friends();
+  const byId={};fs.forEach(f=>byId[f.id]=f);
+  const list=document.getElementById('notificationsList');
+  if(!n.length){list.innerHTML='<div class="notice">🔔 No notifications yet.</div>';updateNotificationBadge(n);return}
+  list.innerHTML=n.map(function(x){
+   const isRequest=x.type==='friend_request'&&x.entity_id&&byId[x.entity_id]&&byId[x.entity_id].status==='pending';
+   const f=isRequest?byId[x.entity_id]:null;
+   const person=f?(f.requester?.display_name||f.requester?.username||'Someone'):'';
+   const unread=!x.read;
+   return '<div class="activity-card" style="opacity:'+(unread?'1':'.62')+';border-left:3px solid '+(unread?'var(--green)':'transparent')+'">'+
+    '<div class="activity-avatar">'+(isRequest?'👥':(unread?'•':'✓'))+'</div><div style="flex:1">'+
+    '<b>'+esc(isRequest?(person+' sent you a friend request'):x.message)+'</b>'+
+    '<small class="muted" style="display:block;margin-top:5px">'+new Date(x.created_at).toLocaleString()+'</small>'+
+    (isRequest?'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button class="primary" onclick="event.stopPropagation();respondNotificationFriend(\\''+x.entity_id+'\\',\\'accepted\\',\\''+x.id+'\\')">✓ Accept</button><button class="secondary" onclick="event.stopPropagation();respondNotificationFriend(\\''+x.entity_id+'\\',\\'blocked\\',\\''+x.id+'\\')">✕ Reject</button></div>':'')+
+    '</div></div>';
+  }).join('');
+  updateNotificationBadge(n);
+ }catch(e){document.getElementById('notificationsList').innerHTML='<div class="empty">Could not load notifications: '+esc(e.message)+'</div>'}
 };
 window.respondNotificationFriend=async function(id,status,notificationId){try{await TuneStreamCloud.respondFriend(id,status);await TuneStreamCloud.markNotificationRead(notificationId);toast(status==='accepted'?'Friend request accepted 👥':'Friend request rejected');updateNotificationBadge();notificationsPage()}catch(e){toast(e.message)}};
 window.updateNotificationBadge=async function(list){try{if(!TuneStreamCloud.enabled())return;const count=Array.isArray(list)?list.filter(x=>!x.read).length:await TuneStreamCloud.unreadNotifications();const ids=['desktopNotifBadge','mobileNotifBadge'];ids.forEach(id=>{const el=document.getElementById(id);if(el){el.textContent=count;el.style.display=count?'inline-flex':'none'}})}catch(e){}};
