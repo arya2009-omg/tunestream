@@ -116,4 +116,39 @@ async function installTuneStream(){
 }
 if(window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone===true)hideInstallButton();
 </script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="cloud.js"></script><script src="features.js"></script></body></html>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="cloud.js"></script><script src="features.js"></script><script>
+(function(){
+function cloudReady(){return window.TuneStreamCloud&&TuneStreamCloud.enabled()}
+window.cloudLibraryPage=async function(){
+ currentPage='library';setActive('nav-library');
+ const content=document.getElementById('content');
+ if(!cloudReady()){libraryPage();return}
+ content.innerHTML='<div class="section-head"><h2>Cloud Library</h2><button class="primary" onclick="createCloudPlaylist()">＋ Create Playlist</button></div><div class="empty">Loading your cloud playlists…</div>';
+ try{
+  const ps=await TuneStreamCloud.listPlaylists();
+  content.innerHTML='<div class="section-head"><div><h2>Your Cloud Library</h2><p class="muted">Playlists are synced with your TuneStream account.</p></div><button class="primary" onclick="createCloudPlaylist()">＋ Create Playlist</button></div><div class="cards">'+(ps.length?ps.map(p=>'<div class="card"><div class="cover">🎵</div><h3>'+esc(p.name)+'</h3><p>Cloud playlist</p><button class="secondary" style="margin:0" onclick="openCloudPlaylist(\''+p.id+'\')">Open</button></div>').join(''):'<div class="empty">No cloud playlists yet.</div>')+'</div>';
+ }catch(e){content.innerHTML='<div class="empty">Could not load cloud library: '+esc(e.message)+'</div>'}
+};
+window.createCloudPlaylist=async function(){
+ if(!cloudReady())return toast('Connect to cloud first');
+ const n=prompt('Cloud playlist name:');if(!n?.trim())return;
+ try{await TuneStreamCloud.createPlaylist(n.trim(),'Created in TuneStream',false);toast('Cloud playlist created ☁️');cloudLibraryPage()}catch(e){toast(e.message)}
+};
+window.openCloudPlaylist=async function(id){
+ const content=document.getElementById('content');content.innerHTML='<div class="empty">Loading playlist…</div>';
+ try{const tracks=await TuneStreamCloud.playlistTracks(id);content.innerHTML='<div class="section-head"><h2>Cloud Playlist</h2><button class="secondary" onclick="cloudLibraryPage()">Back</button></div><div class="rows">'+(tracks.length?tracks.map(x=>createRow({id:x.song_id,title:x.songs?.title||'Unknown',artist:x.songs?.artist||'',album:x.songs?.album||'',emoji:x.songs?.cover_url||'🎵',audio:x.songs?.audio_url||''})).join(''):'<div class="empty">No songs in this playlist yet.</div>')+'</div>'}catch(e){content.innerHTML='<div class="empty">Could not open playlist: '+esc(e.message)+'</div>'}
+};
+window.friendsPage=async function(){
+ currentPage='friends';setActive(null);document.getElementById('content').innerHTML='<div class="section-head"><h2>Friends</h2></div><div class="queue-panel"><input id="friendSearch" class="modal input" style="width:100%;padding:12px;background:#0d1114;border:1px solid var(--border);color:white;border-radius:7px" placeholder="Search username or name"><button class="primary" style="margin-top:10px" onclick="searchFriends()">Search</button><div id="friendResults" class="rows" style="margin-top:16px"></div></div>';
+};
+window.searchFriends=async function(){const q=document.getElementById('friendSearch').value;const box=document.getElementById('friendResults');if(!q.trim())return;box.innerHTML='<div class="empty">Searching…</div>';try{const rows=await TuneStreamCloud.searchProfiles(q);box.innerHTML=rows.length?rows.map(u=>'<div class="row"><div class="row-cover">👤</div><div><div class="row-title">'+esc(u.display_name||u.username||'User')+'</div><div class="row-sub">@'+esc(u.username||'')+'</div></div><button class="secondary" onclick="sendFriend(\''+u.id+'\')">Add Friend</button></div>').join(''):'<div class="empty">No users found.</div>'}catch(e){box.innerHTML='<div class="empty">'+esc(e.message)+'</div>'}};
+window.sendFriend=async function(id){try{await TuneStreamCloud.addFriend(id);toast('Friend request sent 👥')}catch(e){toast(e.message)}};
+window.blendCloudPage=async function(){currentPage='blend';setActive(null);const c=document.getElementById('content');c.innerHTML='<section class="hero"><div class="muted">TUNESTREAM BLEND</div><h1>Music together.</h1><p>Create a shared Blend with your friends using your cloud account.</p><button class="primary" onclick="createBlendCloud()">＋ Create Blend</button></section>'};
+window.createBlendCloud=async function(){try{const n=prompt('Blend name:')||'TuneStream Blend';const b=await TuneStreamCloud.createBlend(n);toast('Blend created 🎶 '+b.name)}catch(e){toast(e.message)}};
+window.jamCloudPage=async function(){currentPage='jam';setActive(null);document.getElementById('content').innerHTML='<section class="hero"><div class="muted">TUNESTREAM JAM</div><h1>Listen together.</h1><p>Create a live room and share its room ID with friends.</p><button class="primary" onclick="createJamCloud()">＋ Create Jam</button></section><div class="queue-panel"><input id="jamIdInput" placeholder="Paste Jam ID" style="width:100%;padding:12px;background:#0d1114;border:1px solid var(--border);color:white;border-radius:7px"><button class="secondary" style="margin:12px 0 0" onclick="joinJamCloud()">Join Jam</button></div>'};
+window.createJamCloud=async function(){try{const j=await TuneStreamCloud.createJam(prompt('Jam name:')||'TuneStream Jam');toast('Jam created. ID: '+j.id);await openJamRoom(j.id)}catch(e){toast(e.message)}};
+window.joinJamCloud=async function(){const id=document.getElementById('jamIdInput').value.trim();if(!id)return;try{await TuneStreamCloud.joinJam(id);await openJamRoom(id)}catch(e){toast(e.message)}};
+window.openJamRoom=async function(id){const c=document.getElementById('content');c.innerHTML='<section class="hero"><div class="muted">LIVE JAM</div><h1>Jam Room</h1><p>Room ID: <b>'+esc(id)+'</b></p><button class="primary" onclick="jamPlayCurrent(\''+id+'\')">▶ Share Current Song</button></section><div class="rows" id="jamEvents"><div class="empty">Connecting to live room…</div></div>';try{const ch=await TuneStreamCloud.jamChannel(id);TuneStreamCloud.subscribeJam(ch,function(e){const s=e.payload;document.getElementById('jamEvents').innerHTML='<div class="empty">Sync: '+esc(s.action||'playback')+' • '+esc(s.title||'track')+'</div>';if(s.songId)playSongById(Number(s.songId));if(s.action==='pause')audio.pause();if(s.action==='play')audio.play().catch(()=>{})});window.activeTuneJam=ch;await ch.subscribe()}catch(e){toast('Jam connection failed: '+e.message)}};
+window.jamPlayCurrent=function(id){const s=queue[currentIndex];if(!s)return;TuneStreamCloud.broadcastPlayback(window.activeTuneJam,{action:audio.paused?'play':'pause',songId:s.id,title:s.title,position:audio.currentTime,at:Date.now()});toast('Playback shared with Jam')};
+})();
+</script></body></html>
