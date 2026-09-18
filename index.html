@@ -56,12 +56,85 @@ body{overscroll-behavior-y:none}.sidebar{box-shadow:8px 0 30px #0003}.main{min-h
  .rows{border-radius:14px}
  .row{min-height:64px}
 }
+</style>
+<style>
+/* Full-screen Now Playing */
+.now-art,.now{cursor:pointer}
+.now-playing{position:fixed;inset:0;z-index:80;display:none;background:radial-gradient(circle at 50% 18%,rgba(30,215,96,.18),transparent 34%),linear-gradient(145deg,#11181a,#090b0d 58%,#050607);overflow:auto}
+.now-playing.open{display:block}
+.np-top{position:sticky;top:0;display:flex;align-items:center;justify-content:space-between;padding:18px 24px;background:rgba(9,11,13,.65);backdrop-filter:blur(18px);z-index:2}
+.np-top b{font-size:13px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase}
+.np-close{width:42px;height:42px;border-radius:50%;background:var(--panel2);color:var(--text);font-size:24px}
+.np-layout{min-height:calc(100vh - 78px);display:grid;grid-template-columns:minmax(280px,560px) minmax(280px,1fr);gap:48px;align-items:center;max-width:1100px;margin:auto;padding:34px 34px 70px}
+.np-art{width:min(520px,42vw);aspect-ratio:1;border-radius:18px;display:grid;place-items:center;background:linear-gradient(145deg,#202a30,#12181c);box-shadow:0 28px 70px #0008;overflow:hidden;font-size:120px}
+.np-art img{width:100%;height:100%;object-fit:cover}
+.np-info{width:100%;max-width:520px}
+.np-kicker{font-size:11px;color:var(--green);font-weight:800;letter-spacing:2px}
+.np-title{font-size:clamp(32px,5vw,58px);line-height:1.05;margin:10px 0 6px}
+.np-artist{font-size:18px;color:var(--muted);margin-bottom:24px}
+.np-actions{display:flex;gap:10px;margin-bottom:25px}
+.np-action{width:44px;height:44px;border-radius:50%;background:var(--panel2);color:var(--text);font-size:18px}
+.np-action.liked{color:#ff4d7d}
+.np-seek input{width:100%;accent-color:var(--green);cursor:pointer}
+.np-times{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:5px}
+.np-controls{display:flex;align-items:center;justify-content:center;gap:18px;margin:25px 0}
+.np-controls button{background:transparent;color:var(--text);font-size:24px;padding:10px}
+.np-controls .np-main-play{width:62px;height:62px;border-radius:50%;background:var(--green);color:#000;font-size:24px}
+.np-lower{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.np-panel{background:rgba(18,22,26,.8);border:1px solid var(--border);border-radius:14px;padding:15px}
+.np-panel h3{margin:0 0 7px;font-size:14px}
+.np-panel p{margin:0;color:var(--muted);font-size:12px;line-height:1.5}
+@media(max-width:800px){
+ .now-playing{background:radial-gradient(circle at 50% 12%,rgba(30,215,96,.16),transparent 35%),#090b0d}
+ .np-top{padding:12px 14px}
+ .np-layout{display:flex;flex-direction:column;justify-content:flex-start;gap:20px;padding:18px 18px 40px;min-height:0}
+ .np-art{width:min(82vw,420px);font-size:80px;border-radius:16px;box-shadow:0 20px 50px #0008}
+ .np-info{max-width:none}
+ .np-title{font-size:32px}
+ .np-artist{font-size:16px;margin-bottom:18px}
+ .np-actions{margin-bottom:18px}
+ .np-controls{margin:18px 0}
+ .np-lower{grid-template-columns:1fr}
+}
 </style></head>
 <body><button class="mobile-menu-btn" onclick="openMobileMenu()" aria-label="Open menu">⋮</button><div class="mobile-drawer-bg" id="mobileDrawerBg" onclick="closeMobileMenu(event)"><div class="mobile-drawer" onclick="event.stopPropagation()"><button class="drawer-item" onclick="closeMobileMenu()">✕ Close</button><h2>☰ TuneStream</h2><button class="drawer-item" onclick="homePage();closeMobileMenu()">🏠 Home</button><button class="drawer-item" onclick="searchPage();closeMobileMenu()">🔎 Search</button><button class="drawer-item" onclick="cloudLibraryPage();closeMobileMenu()">📚 Your Library</button><button class="drawer-item" onclick="likedPage();closeMobileMenu()">❤️ Liked Songs</button><button class="drawer-item" onclick="playlistsPage();closeMobileMenu()">🎵 Playlists</button><button class="drawer-item" onclick="historyPage();closeMobileMenu()">🕘 Recently Played</button><button class="drawer-item" onclick="browsePage();closeMobileMenu()">🧭 Browse</button><button class="drawer-item" onclick="friendsPage();closeMobileMenu()">👥 Friends</button><button class="drawer-item" onclick="blendCloudPage();closeMobileMenu()">🔀 Blend</button><button class="drawer-item" onclick="jamCloudPage();closeMobileMenu()">🎧 Jam</button><button class="drawer-item" onclick="activityPage();closeMobileMenu()">📰 Friend Activity</button><button class="drawer-item" onclick="notificationsPage();closeMobileMenu()">🔔 Notifications <span id="mobileNotifBadge" class="notif-badge" style="display:none">0</span></button><button class="drawer-item" onclick="wrappedPage();closeMobileMenu()">✨ Your Wrapped</button><button class="drawer-item" onclick="queuePage();closeMobileMenu()">📋 Queue</button><button class="drawer-item" onclick="accountPage();closeMobileMenu()">👤 Account</button><div class="settings-section"><h3>⚙️ Settings</h3><button class="drawer-item" onclick="toast(navigator.onLine?'You are online':'You are offline')">🌐 Connection Status</button><button class="drawer-item" onclick="toast('Auto-update is enabled')">🔄 Auto Update</button><button class="drawer-item" onclick="toast('TuneStream PWA is ready to install')">📲 App / PWA</button><button class="drawer-item" onclick="toast('Your preferences are saved on this device')">💾 Storage</button><button class="drawer-item" onclick="settingsPage();closeMobileMenu()">⚙️ Full Settings</button></div></div></div><div id="onlineBadge" style="position:fixed;top:14px;right:18px;z-index:20;background:#12161a;border:1px solid #252b30;padding:7px 11px;border-radius:18px;font-size:12px;color:#1ed760">● ONLINE DEMO</div><div class="app"><aside class="sidebar"><div class="logo">Tune<span>Stream</span></div><nav class="nav">
 <button id="nav-home" onclick="homePage()">🏠 Home</button><button id="nav-search" onclick="searchPage()">🔎 Search</button><button id="nav-library" onclick="cloudLibraryPage()">📚 Your Library</button><button id="nav-liked" onclick="likedPage()">❤️ Liked Songs</button><button id="nav-playlists" onclick="playlistsPage()">🎵 Playlists</button><button id="nav-history" onclick="historyPage()">🕘 Recently Played</button><button id="nav-browse" onclick="browsePage()">🧭 Browse</button><button id="nav-friends" onclick="friendsPage()">👥 Friends</button><button id="nav-notifications" onclick="notificationsPage()">🔔 Notifications <span id="desktopNotifBadge" class="notif-badge" style="display:none">0</span></button><button id="nav-blend" onclick="blendCloudPage()">🔀 Blend</button><button id="nav-account" onclick="accountPage()">👤 Account</button><button id="nav-jam" onclick="jamCloudPage()">🎧 Jam</button><button id="nav-wrapped" onclick="wrappedPage()">✨ Wrapped</button><button id="nav-queue" onclick="queuePage()">📋 Queue</button><button id="nav-login" class="login" onclick="openAuth()">👤 Login</button><button id="nav-download" class="login" style="display:none" onclick="downloadTuneStream()">⬇️ Download</button>
 </nav></aside><main class="main"><div class="topbar"><div class="search"><span class="search-icon">🔎</span><input id="searchInput" placeholder="What do you want to play?" oninput="liveSearch(this.value)"></div><button id="installAppBtn" class="install-app" onclick="installTuneStream()" aria-label="Install TuneStream">📲 Install App</button><div class="profile"><label class="avatar" id="avatar" for="profilePhotoInput" style="cursor:pointer;overflow:hidden" title="Change profile photo">G</label><input id="profilePhotoInput" type="file" accept="image/*" style="display:none" onchange="changeProfilePhoto(event)"><span id="profileName" onclick="accountPage()" style="cursor:pointer">Guest</span></div></div><div id="content"></div></main></div>
-<div class="player"><div class="now-art" id="nowArt">🎵</div><div class="now"><strong id="nowTitle">No song selected</strong><small id="nowArtist">Choose a song to start</small></div><div class="controls"><button class="icon-btn" onclick="previousSong()">⏮</button><button class="circle" id="playBtn" onclick="togglePlay()">▶</button><button class="icon-btn" onclick="nextSong()">⏭</button><button class="icon-btn" onclick="toggleShuffle()" id="shuffleBtn">🔀</button></div><div class="progress-wrap"><small id="currentTime">0:00</small><input class="progress" id="progress" type="range" min="0" max="100" value="0" oninput="seek(this.value)"><small id="duration">0:00</small></div><input class="volume" id="volume" type="range" min="0" max="1" step=".01" value=".8" oninput="audio.volume=this.value"></div>
-<div class="modal-bg" id="authModal"><div class="modal"><button class="close" onclick="closeAuth()">×</button><h2 id="authTitle">Login</h2><input id="authName" placeholder="Name" style="display:none"><input id="authEmail" type="email" placeholder="Email"><input id="authPassword" type="password" placeholder="Password"><button class="primary" style="width:100%" onclick="submitAuth()">Continue</button><p class="muted" id="authSwitch">New here? <button class="icon-btn" onclick="showSignup()">Create account</button></p></div></div><div class="toast" id="toast"></div><audio id="audio"></audio>
+<div class="player"><div class="now-art" id="nowArt" onclick="openNowPlaying(event)">🎵</div><div class="now" onclick="openNowPlaying(event)"><strong id="nowTitle">No song selected</strong><small id="nowArtist">Choose a song to start</small></div><div class="controls"><button class="icon-btn" onclick="previousSong()">⏮</button><button class="circle" id="playBtn" onclick="togglePlay()">▶</button><button class="icon-btn" onclick="nextSong()">⏭</button><button class="icon-btn" onclick="toggleShuffle()" id="shuffleBtn">🔀</button></div><div class="progress-wrap"><small id="currentTime">0:00</small><input class="progress" id="progress" type="range" min="0" max="100" value="0" oninput="seek(this.value)"><small id="duration">0:00</small></div><input class="volume" id="volume" type="range" min="0" max="1" step=".01" value=".8" oninput="audio.volume=this.value"></div>
+<div class="modal-bg" id="authModal"><div class="modal"><button class="close" onclick="closeAuth()">×</button><h2 id="authTitle">Login</h2><input id="authName" placeholder="Name" style="display:none"><input id="authEmail" type="email" placeholder="Email"><input id="authPassword" type="password" placeholder="Password"><button class="primary" style="width:100%" onclick="submitAuth()">Continue</button><p class="muted" id="authSwitch">New here? <button class="icon-btn" onclick="showSignup()">Create account</button></p></div></div><div class="toast" id="toast"></div>
+<div class="now-playing" id="nowPlaying" aria-hidden="true">
+  <div class="np-top">
+    <button class="np-close" onclick="closeNowPlaying()" aria-label="Close">⌄</button>
+    <b>Now Playing</b>
+    <button class="np-action" onclick="queuePage();closeNowPlaying()" aria-label="Open queue">☷</button>
+  </div>
+  <div class="np-layout">
+    <div class="np-art" id="npArt">🎵</div>
+    <div class="np-info">
+      <div class="np-kicker">TUNESTREAM • PLAYING NOW</div>
+      <div class="np-title" id="npTitle">No song selected</div>
+      <div class="np-artist" id="npArtist">Choose a song to start</div>
+      <div class="np-actions">
+        <button class="np-action" id="npLike" onclick="npToggleLike()" aria-label="Like">♡</button>
+        <button class="np-action" onclick="toggleShuffle()" aria-label="Shuffle">🔀</button>
+        <button class="np-action" onclick="queuePage();closeNowPlaying()" aria-label="Queue">☷</button>
+      </div>
+      <div class="np-seek">
+        <input id="npProgress" type="range" min="0" max="100" value="0" oninput="npSeek(this.value)" aria-label="Seek">
+        <div class="np-times"><span id="npCurrent">0:00</span><span id="npDuration">0:00</span></div>
+      </div>
+      <div class="np-controls">
+        <button onclick="previousSong()" aria-label="Previous">⏮</button>
+        <button class="np-main-play" id="npPlay" onclick="npTogglePlay()" aria-label="Play">▶</button>
+        <button onclick="nextSong()" aria-label="Next">⏭</button>
+      </div>
+      <div class="np-lower">
+        <div class="np-panel"><h3>Lyrics</h3><p>Lyrics view is ready for future track lyrics. For now, enjoy the music and follow along with your favorite lyrics source.</p></div>
+        <div class="np-panel"><h3>Queue</h3><p id="npQueueInfo">Your upcoming tracks will appear here.</p></div>
+      </div>
+    </div>
+  </div>
+</div><audio id="audio"></audio>
 <script>
 const songs=[{id:1,title:"Midnight Drive",artist:"TuneStream",album:"Night City",emoji:"🌃",audio:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"},{id:2,title:"Neon Nights",artist:"TuneStream",album:"Night City",emoji:"🌌",audio:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"},{id:3,title:"Afterglow",artist:"TuneStream",album:"Afterglow",emoji:"🌅",audio:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"},{id:4,title:"City Lights",artist:"TuneStream",album:"City Lights",emoji:"🌆",audio:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3"},{id:5,title:"Ocean Dreams",artist:"Nova",album:"Blue",emoji:"🌊",audio:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3"},{id:6,title:"Lost Stars",artist:"Aria",album:"Universe",emoji:"✨",audio:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3"},{id:7,title:"Sunset Boulevard",artist:"Nova",album:"Summer",emoji:"🌇",audio:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3"},{id:8,title:"Electric Heart",artist:"Aria",album:"Pulse",emoji:"💚",audio:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3"}];
 const audio=document.getElementById("audio");audio.preload="metadata";let queue=[...songs],currentIndex=0,shuffle=false,playing=false,authMode="login",currentPage="home";
@@ -268,5 +341,63 @@ const professionalHome=function(){
  document.getElementById("content").innerHTML='<section class="home-hero"><div class="hero-copy"><div class="eyebrow">TUNESTREAM • MADE FOR YOUR MOMENT</div><h1>Good music.<br><span style="color:var(--green)">Better moments.</span></h1><p>Discover fresh sounds, revisit your favorites and build the soundtrack to your day.</p><div class="quick-actions"><button class="primary" onclick="playSongById(1)">▶ Start Listening</button><button class="secondary" onclick="browsePage()">🧭 Browse Music</button></div></div></section><div class="home-stats"><div class="mini-stat"><span>🎧</span><div><b>8</b><div class="muted">Tracks ready</div></div></div><div class="mini-stat"><span>❤️</span><div><b>'+l+'</b><div class="muted">Liked songs</div></div></div><div class="mini-stat"><span>🕘</span><div><b>'+h+'</b><div class="muted">Recently played</div></div></div></div><div class="section-head"><div><h2>Quick picks</h2><p class="section-sub">Start with something you might love.</p></div><button class="secondary" onclick="discoverPage()">See all</button></div><div class="cards">'+cards+'</div><div class="section-head"><div><h2>Made For You</h2><p class="section-sub">Personalized listening spaces.</p></div></div><div class="feature-strip"><div class="feature" onclick="discoverPage()">✨ Discover Weekly<p>Fresh picks for your taste.</p></div><div class="feature" onclick="dailyMixPage()">🎧 Daily Mixes<p>Ready-to-play mood mixes.</p></div><div class="feature" onclick="releaseRadarPage()">🚀 Release Radar<p>New sounds to explore.</p></div><div class="feature" onclick="blendPage()">🔀 Blend<p>Mix your taste with friends.</p></div></div><div class="section-head"><div><h2>Browse by Mood</h2><p class="section-sub">Pick a vibe and press play.</p></div></div><div class="mood-row"><div class="mood" onclick="filterMusic('Chill')">🌙 Chill<small>Relax & night</small></div><div class="mood" onclick="filterMusic('Focus')">🧠 Focus<small>Study & coding</small></div><div class="mood" onclick="filterMusic('Workout')">⚡ Workout<small>Energy</small></div><div class="mood" onclick="filterMusic('Party')">🎉 Party<small>Dance mode</small></div></div><div class="section-head"><div><h2>Trending Now</h2><p class="section-sub">Popular tracks on TuneStream.</p></div><button class="secondary" onclick="queuePage()">Queue</button></div><div class="rows">'+rows+'</div>';
 };
 window.homePage=professionalHome;
+})();
+</script>
+<script>
+(function(){
+  function npSong(){
+    return (window.queue && window.queue[window.currentIndex]) || (typeof queue!=="undefined" ? queue[currentIndex] : null);
+  }
+  function npSync(){
+    const s=npSong(); if(!s)return;
+    const art=document.getElementById("npArt");
+    const title=document.getElementById("npTitle");
+    const artist=document.getElementById("npArtist");
+    const like=document.getElementById("npLike");
+    if(title)title.textContent=s.title||"Unknown";
+    if(artist)artist.textContent=(s.artist||"Unknown artist")+" • "+(s.album||"");
+    if(art)art.innerHTML=s.cover?'<img src="'+s.cover+'" alt="">':(s.emoji||"🎵");
+    if(like){const yes=liked().includes(s.id);like.textContent=yes?"♥":"♡";like.classList.toggle("liked",yes);}
+    const q=document.getElementById("npQueueInfo"); if(q)q.textContent=((window.queue?.length||0)-((window.currentIndex||0)+1))+" track(s) after this one.";
+    npTimeSync();
+  }
+  function npTimeSync(){
+    if(typeof audio==="undefined")return;
+    const p=document.getElementById("npProgress"),cur=document.getElementById("npCurrent"),dur=document.getElementById("npDuration"),play=document.getElementById("npPlay");
+    const d=audio.duration||0,t=audio.currentTime||0;
+    if(p)p.value=d?(t/d)*100:0;
+    if(cur)cur.textContent=formatTime(t);
+    if(dur)dur.textContent=formatTime(d);
+    if(play)play.textContent=audio.paused?"▶":"❚❚";
+  }
+  window.openNowPlaying=function(e){
+    if(e&&e.target&&e.target.closest("button,input"))return;
+    npSync();
+    const el=document.getElementById("nowPlaying"); if(!el)return;
+    el.classList.add("open");el.setAttribute("aria-hidden","false");
+  };
+  window.closeNowPlaying=function(){
+    const el=document.getElementById("nowPlaying"); if(!el)return;
+    el.classList.remove("open");el.setAttribute("aria-hidden","true");
+  };
+  window.npTogglePlay=function(){
+    if(typeof queue==="undefined"||!queue.length)return;
+    if(audio.paused){audio.play().catch(()=>{});}else audio.pause();
+  };
+  window.npSeek=function(v){if(audio.duration)audio.currentTime=(Number(v)/100)*audio.duration;};
+  window.npToggleLike=function(){
+    const s=npSong();if(!s)return;toggleLike(s.id);setTimeout(npSync,0);
+  };
+  document.addEventListener("keydown",function(e){
+    if(e.key==="Escape")closeNowPlaying();
+  });
+  if(typeof audio!=="undefined"){
+    ["timeupdate","loadedmetadata","durationchange","play","pause","ended"].forEach(ev=>audio.addEventListener(ev,npTimeSync));
+  }
+  const oldStartNP=window.startCurrentSong;
+  if(oldStartNP)window.startCurrentSong=function(){oldStartNP();setTimeout(npSync,0);};
+  const oldToggleNP=window.toggleLike;
+  if(oldToggleNP)window.toggleLike=function(id){oldToggleNP(id);setTimeout(npSync,0);};
+  window.addEventListener("load",function(){setTimeout(npSync,300);});
 })();
 </script></body></html>
