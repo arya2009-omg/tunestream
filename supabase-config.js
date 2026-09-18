@@ -1,7 +1,1 @@
-// Public frontend configuration only.
-// Replace these placeholders with values from your Supabase project.
-// NEVER put the service_role key here.
-window.TUNESTREAM_SUPABASE = {
-  url: "",
-  anonKey: ""
-};
+// Public frontend configuration only.\n// The publishable key is safe for browser use when Row Level Security is correctly configured.\n// NEVER put the service_role/secret key here.\nwindow.TUNESTREAM_SUPABASE = {\n  url: "https://admlhaioauibsbupojwl.supabase.co",\n  anonKey: "sb_publishable_PYkeSV4BXRimhyP0ir0tEw_IusMICPZ"\n};\n
