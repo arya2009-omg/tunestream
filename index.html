@@ -62,11 +62,11 @@ function updateProfile(){let u=JSON.parse(localStorage.getItem("tunestream_user"
 audio.addEventListener("timeupdate",()=>{if(audio.duration){progress.value=audio.currentTime/audio.duration*100;currentTime.textContent=formatTime(audio.currentTime);duration.textContent=formatTime(audio.duration)}});audio.addEventListener("play",()=>{playing=true;document.getElementById("playBtn").textContent="❚❚"});audio.addEventListener("pause",()=>{playing=false;document.getElementById("playBtn").textContent="▶"});audio.addEventListener("ended",nextSong);function formatTime(s){s=Math.floor(s||0);return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")}updateProfile();homePage();
 </script><script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}
 let deferredInstallPrompt=null;
-window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredInstallPrompt=e;showInstallButton()});
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredInstallPrompt=e;showInstallButton()});window.addEventListener("load",()=>setTimeout(showInstallButton,1200));
 window.addEventListener("appinstalled",()=>{deferredInstallPrompt=null;hideInstallButton();toast("TuneStream installed successfully 🎧")});
 function showInstallButton(){let b=document.getElementById("installAppBtn");if(b&&!window.matchMedia("(display-mode: standalone)").matches)b.classList.add("show")}
 function hideInstallButton(){let b=document.getElementById("installAppBtn");if(b)b.classList.remove("show")}
-async function installTuneStream(){if(!deferredInstallPrompt){toast("Install option is available from your browser menu");return}deferredInstallPrompt.prompt();let choice=await deferredInstallPrompt.userChoice;deferredInstallPrompt=null;if(choice.outcome==="accepted"){hideInstallButton();toast("Installing TuneStream…")}}
+async function installTuneStream(){if(!deferredInstallPrompt){if(/Android/i.test(navigator.userAgent)){toast("Chrome menu ⋮ → Add to Home screen → Install TuneStream")}else{toast("Use your browser's Install App or Add to Home Screen option")}return}deferredInstallPrompt.prompt();let choice=await deferredInstallPrompt.userChoice;deferredInstallPrompt=null;if(choice.outcome==="accepted"){hideInstallButton();toast("Installing TuneStream…")}}
 if(window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone===true)hideInstallButton();
 </script>
 </body></html>
