@@ -358,7 +358,7 @@ window.homePage=professionalHome;
     if(artist)artist.textContent=(s.artist||"Unknown artist")+" • "+(s.album||"");
     if(art)art.innerHTML=s.cover?'<img src="'+s.cover+'" alt="">':(s.emoji||"🎵");
     if(like){const yes=liked().includes(s.id);like.textContent=yes?"♥":"♡";like.classList.toggle("liked",yes);}
-    const q=document.getElementById("npQueueInfo"); if(q)q.textContent=((window.queue?.length||0)-((window.currentIndex||0)+1))+" track(s) after this one.";
+    const q=document.getElementById("npQueueInfo"); if(q){const ql=typeof queue!=="undefined"?queue.length:0;const qi=typeof currentIndex!=="undefined"?currentIndex:0;q.textContent=Math.max(0,ql-qi-1)+" track(s) after this one.";}
     npTimeSync();
   }
   function npTimeSync(){
@@ -382,7 +382,7 @@ window.homePage=professionalHome;
   };
   window.npTogglePlay=function(){
     if(typeof queue==="undefined"||!queue.length)return;
-    if(audio.paused){audio.play().catch(()=>{});}else audio.pause();
+    togglePlay();
   };
   window.npSeek=function(v){if(audio.duration)audio.currentTime=(Number(v)/100)*audio.duration;};
   window.npToggleLike=function(){
