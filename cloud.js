@@ -33,7 +33,15 @@
     async jamChannel(jamId){if(!this.enabled())throw new Error("Cloud backend is not configured");await client.realtime.setAuth();return client.channel("jam:"+jamId,{config:{private:true,presence:{key:"user"}}})},
     subscribeJam:function(channel,handler){return channel.on("broadcast",{event:"playback"},handler).subscribe()},
     broadcastPlayback:function(channel,state){return channel.send({type:"broadcast",event:"playback,payload":state})},
-    client:function(){return client}
+
+  async friends(){const u=await this.session();if(!u)throw new Error("Please login");const r=await client.from("friendships").select("id,requester_id,addressee_id,status,created_at,requester:profiles!friendships_requester_id_fkey(id,username,display_name),addressee:profiles!friendships_addressee_id_fkey(id,username,display_name)").or("requester_id.eq."+u.user.id+",addressee_id.eq."+u.user.id).order("created_at",{ascending:false});if(r.error)throw r.error;return r.data||[]},
+    async respondFriend(id,status){const u=await this.session();if(!u)throw new Error("Please login");if(!["accepted","blocked"].includes(status))throw new Error("Invalid status");const r=await client.from("friendships").update({status}).eq("id",id).eq("addressee_id",u.user.id).select().single();if(r.error)throw r.error;return r.data},
+    async updateProfile(data){const u=await this.session();if(!u)throw new Error("Please login");const r=await client.from("profiles").update(data).eq("id",u.user.id).select().single();if(r.error)throw r.error;return r.data},
+    async likeSong(songId){const u=await this.session();if(!u)throw new Error("Please login");const r=await client.from("likes").upsert({user_id:u.user.id,song_id:songId});if(r.error)throw r.error},
+    async unlikeSong(songId){const u=await this.session();if(!u)throw new Error("Please login");const r=await client.from("likes").delete().eq("user_id",u.user.id).eq("song_id",songId);if(r.error)throw r.error},
+    async cloudLikes(){const u=await this.session();if(!u)return[];const r=await client.from("likes").select("song_id").eq("user_id",u.user.id);if(r.error)throw r.error;return (r.data||[]).map(x=>x.song_id)},
+    async recordPlay(songId){const u=await this.session();if(!u)return;const r=await client.from("listening_history").insert({user_id:u.user.id,song_id:songId});if(r.error)throw r.error},
+    async cloudHistory(limit=30){const u=await this.session();if(!u)return[];const r=await client.from("listening_history").select("song_id,played_at").eq("user_id",u.user.id).order("played_at",{ascending:false}).limit(limit);if(r.error)throw r.error;return r.data||[]},\n    client:function(){return client}
   };
   function syncUser(user){
     const old=JSON.parse(localStorage.getItem("tunestream_user")||"{}");
