@@ -19,7 +19,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.context-men
 /* TuneStream web upgrade pack — responsive polish + player shortcuts */
 (function(){
   var style=document.createElement('style');
-  style.textContent='
+  style.textContent=`
     .ts-upgrade-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 22px}
     .ts-chip{border:1px solid var(--border);background:var(--panel);color:var(--text);padding:9px 13px;border-radius:999px;cursor:pointer;font-size:13px}
     .ts-chip:hover{background:var(--panel2);border-color:#354047}
@@ -28,7 +28,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.context-men
     .card,.feature,.browse-pill,.mini-stat,.mood{border:1px solid transparent}
     .card:hover,.feature:hover,.browse-pill:hover,.mini-stat:hover,.mood:hover{border-color:#303a40}
     @media(max-width:800px){.ts-upgrade-bar{margin-bottom:16px}.ts-chip{padding:8px 11px}.ts-shortcuts{font-size:11px}}
-  ';
+  `;
   document.head.appendChild(style);
   function safePlayRandom(){
     if(!window.songs||!songs.length)return;
