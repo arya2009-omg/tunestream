@@ -16,6 +16,7 @@
     "userInterfaceStyle": "dark",
     "plugins": [
       "expo-router",
+      "expo-dev-client",
       [
         "expo-audio",
         {
