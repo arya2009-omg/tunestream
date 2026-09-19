@@ -24,6 +24,9 @@ const app=express();
 app.use(cors({origin:process.env.CLIENT_ORIGIN||"*"}));
 app.use(express.json({limit:"2mb"}));
 app.use("/uploads",express.static(UPLOAD_DIR));
+const WEB_DIR=path.resolve(__dirname,"..");
+app.use(express.static(WEB_DIR,{index:false}));
+app.get("/",(req,res)=>res.sendFile(path.join(WEB_DIR,"index.html")));
 app.get("/health",(req,res)=>res.json({ok:true,service:"tunestream-server"}));
 
 const publicUser=u=>({_id:u._id,id:u._id,name:u.name,email:u.email});
