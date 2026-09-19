@@ -1,0 +1,13 @@
+import{create}from"zustand";import{createAudioPlayer,setAudioModeAsync,AudioPlayer}from"expo-audio";import{SERVER_URL}from"@/lib/api";
+export interface Song{_id:string;title:string;artist:string;album?:string;audioUrl:string;coverImage?:string}
+interface State{currentSong:Song|null;queue:Song[];isPlaying:boolean;shuffle:boolean;repeat:"off"|"all"|"one";position:number;duration:number;player:AudioPlayer|null;playSong:(s:Song,q?:Song[])=>Promise<void>;togglePlay:()=>Promise<void>;next:()=>Promise<void>;prev:()=>Promise<void>;seek:(ms:number)=>Promise<void>;toggleShuffle:()=>void;toggleRepeat:()=>void}
+let timer:ReturnType<typeof setInterval>|null=null;
+const tick=(set:any,get:any)=>{if(timer)clearInterval(timer);timer=setInterval(()=>{const p=get().player;if(!p)return;set({position:(p.currentTime||0)*1000,duration:(p.duration||0)*1000,isPlaying:!!p.playing});if(p.duration>0&&p.currentTime>=p.duration-.25)get().next()},400)};
+export const usePlayerStore=create<State>((set,get)=>({currentSong:null,queue:[],isPlaying:false,shuffle:false,repeat:"off",position:0,duration:0,player:null,
+playSong:async(s,q=[])=>{const old=get().player;if(old)try{old.remove()}catch{};await setAudioModeAsync({playsInSilentMode:true,shouldPlayInBackground:true});const uri=s.audioUrl.startsWith("http")?s.audioUrl:SERVER_URL+s.audioUrl;const p=createAudioPlayer(uri,{updateInterval:250});set({currentSong:s,queue:q.length?q:get().queue,player:p,isPlaying:true,position:0,duration:0});p.play();tick(set,get)},
+togglePlay:async()=>{const p=get().player;if(!p)return;if(p.playing)p.pause();else p.play();set({isPlaying:!p.playing})},
+next:async()=>{const{queue,currentSong,shuffle,repeat}=get();if(!queue.length||!currentSong)return;if(repeat==="one")return get().playSong(currentSong,queue);let n:Song;if(shuffle)n=queue[Math.floor(Math.random()*queue.length)];else{const i=queue.findIndex(x=>x._id===currentSong._id);n=queue[(i+1)%queue.length]}return get().playSong(n,queue)},
+prev:async()=>{const{queue,currentSong}=get();if(!queue.length||!currentSong)return;const i=queue.findIndex(x=>x._id===currentSong._id);return get().playSong(queue[i<=0?queue.length-1:i-1],queue)},
+seek:async ms=>{const p=get().player;if(p){p.seekTo(ms/1000);set({position:ms})}},
+toggleShuffle:()=>set(s=>({shuffle:!s.shuffle})),toggleRepeat:()=>set(s=>({repeat:s.repeat==="off"?"all":s.repeat==="all"?"one":"off"}))
+}));
