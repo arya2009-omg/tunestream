@@ -25,6 +25,12 @@ jobs:
       - name: Install dependencies
         run: npm install --legacy-peer-deps
 
+      - name: Align Expo SDK dependencies
+        run: npx expo install --fix
+
+      - name: Validate Expo project
+        run: npx expo-doctor@latest
+
       - name: Setup EAS
         uses: expo/expo-github-action@v8
         with:
@@ -35,7 +41,7 @@ jobs:
         run: eas init --force --non-interactive --account arya2009-omg
 
       - name: Build Android APK
-        run: eas build --platform android --profile preview --non-interactive --wait
+        run: eas build --platform android --profile preview --non-interactive --wait --verbose-logs
 
       - name: Build summary
         run: echo "EAS APK build completed. Download the APK from the EAS build output/link above."
