@@ -1,11 +1,10 @@
 /* TuneStream authorized music API adapter
  * Source: Jamendo API v3
- * The built-in client id is Jamendo's documented TEST read-API id.
- * Replace TUNESTREAM_JAMENDO_CLIENT_ID with your own developer client id
- * before production/commercial use.
+ * TuneStream's own Jamendo developer client id.
+ * Keep the Jamendo client_secret private; it is never needed for public read/search calls.
  */
 (function(){
-  const CLIENT_ID = window.TUNESTREAM_JAMENDO_CLIENT_ID || "709fa152";
+  const CLIENT_ID = window.TUNESTREAM_JAMENDO_CLIENT_ID || "d9bd2820";
   const API = "https://api.jamendo.com/v3.0/tracks/";
   let lastResults = [];
 
