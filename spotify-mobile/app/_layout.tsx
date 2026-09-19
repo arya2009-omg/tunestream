@@ -1,0 +1,2 @@
+import"../global.css";import{useEffect}from"react";import{Stack}from"expo-router";import{StatusBar}from"expo-status-bar";import{SafeAreaProvider}from"react-native-safe-area-context";import{useAuthStore}from"@/store/authStore";
+export default function RootLayout(){const fetchUser=useAuthStore(s=>s.fetchUser);useEffect(()=>{fetchUser()},[]);return <SafeAreaProvider><StatusBar style="light"/><Stack screenOptions={{headerShown:false,contentStyle:{backgroundColor:"#000"}}}/></SafeAreaProvider>}
