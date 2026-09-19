@@ -272,50 +272,72 @@ function historyPage(){currentPage="history";setActive("nav-history");let h=hist
 async function resolveOnlineAudio(song){
   if(!song || song.audio)return song;
   try{
-    const jobs=[];
-    if(window.searchJamendoTracks)jobs.push(window.searchJamendoTracks(song.title,8).catch(()=>[]));
-    if(window.searchAudius)jobs.push(window.searchAudius(song.title,8).catch(()=>[]));
-    const results=(await Promise.all(jobs)).flat();
-    const title=String(song.title||'').toLowerCase().trim();
-    const artist=String(song.artist||'').toLowerCase().trim();
-    const match=results.find(x=>x?.audio && (String(x.title||'').toLowerCase().trim()===title || String(x.title||'').toLowerCase().includes(title))) || results.find(x=>x?.audio);
-    if(match){Object.assign(song,match);return song;}
+    if(window.searchJamendoTracks){
+      const results=await window.searchJamendoTracks(song.title,10).catch(()=>[]);
+      const title=String(song.title||'').toLowerCase().trim();
+      const match=results.find(x=>x&&x.audio&&String(x.title||'').toLowerCase().trim()===title)
+        || results.find(x=>x&&x.audio&&String(x.title||'').toLowerCase().includes(title))
+        || results.find(x=>x&&x.audio);
+      if(match){Object.assign(song,match);return song;}
+    }
   }catch(e){}
   return null;
 }
 async function playSongById(id){
-  let i=queue.findIndex(s=>s.id===id);
+  const i=queue.findIndex(s=>s.id===id);
   if(i<0)return;
   currentIndex=i;
-  const s=queue[currentIndex];
-  if(s&&!s.audio){toast('Finding music from connected sources…');await resolveOnlineAudio(s);}
   await startCurrentSong();
 }
 async function startApiListening(){
-  if(!window.searchJamendoTracks)return toast('Music API is not available yet.');
+  if(!window.searchJamendoTracks){toast('Music service is unavailable.');return;}
   try{
-    toast('Loading licensed music…');
+    toast('Loading Hindi music…');
     const list=await window.searchJamendoTracks('hindi',20);
-    if(!list.length)return toast('No licensed online tracks found.');
+    if(!Array.isArray(list)||!list.length){toast('No online tracks found.');return;}
     list.forEach(s=>{if(!songs.some(x=>x.id===s.id))songs.push(s);});
-    queue=[...list];currentIndex=0;await startCurrentSong();
-  }catch(e){toast('Could not load online music.')}
+    queue=list.slice();
+    currentIndex=0;
+    await startCurrentSong();
+  }catch(e){
+    toast('Music service could not be reached.');
+  }
 }
-function addHistory(id){let h=history().filter(x=>x!==id);h.unshift(id);saveHistory(h.slice(0,30))}
+function addHistory(id){let h=history().filter(x=>x!==id);h.unshift(id);saveHistory(h.slice(0,30));}
 async function startCurrentSong(){
-  let s=queue[currentIndex];if(!s)return;
-  document.getElementById('nowTitle').textContent=s.title;
-  document.getElementById('nowArtist').textContent=s.artist;
-  const art=document.getElementById('nowArt');if(art)art.innerHTML=s.cover?'<img src="'+esc(s.cover)+'" alt="">':(s.emoji||'🎵');
-  progress.value=0;currentTime.textContent='0:00';duration.textContent='0:00';addHistory(s.id);
-  if(!s.audio)await resolveOnlineAudio(s);
-  if(!s.audio){playing=false;document.getElementById('playBtn').textContent='▶';toast('Online audio not found.');return;}
-  audio.pause();audio.src=s.audio;audio.load();
-  try{await audio.play();playing=true;document.getElementById('playBtn').textContent='❚❚';}
-  catch(e){playing=false;document.getElementById('playBtn').textContent='▶';toast('This audio source could not be played.');}
+  const s=queue[currentIndex];
+  if(!s)return;
+  document.getElementById('nowTitle').textContent=s.title||'Unknown';
+  document.getElementById('nowArtist').textContent=s.artist||'Unknown artist';
+  const art=document.getElementById('nowArt');
+  if(art)art.innerHTML=s.cover?'<img src="'+esc(s.cover)+'" alt="">':(s.emoji||'🎵');
+  progress.value=0;currentTime.textContent='0:00';duration.textContent='0:00';
+  addHistory(s.id);
+  if(!s.audio){
+    toast('Finding playable audio…');
+    await resolveOnlineAudio(s);
+  }
+  if(!s.audio){
+    playing=false;
+    document.getElementById('playBtn').textContent='▶';
+    toast('No playable audio was found.');
+    return;
+  }
+  try{
+    audio.pause();
+    audio.removeAttribute('src');
+    audio.load();
+    audio.src=s.audio;
+    audio.load();
+    await audio.play();
+    playing=true;
+    document.getElementById('playBtn').textContent='❚❚';
+  }catch(e){
+    playing=false;
+    document.getElementById('playBtn').textContent='▶';
+    toast('Audio playback failed. Try another track.');
+  }
 }
-(id){let h=history().filter(x=>x!==id);h.unshift(id);saveHistory(h.slice(0,30))}
-function togglePlay(){let s=queue[currentIndex];if(!s)return;if(!s.audio)return toast("This track has no online audio source.");if(audio.paused){audio.play();playing=true;document.getElementById("playBtn").textContent="❚❚"}else{audio.pause();playing=false;document.getElementById("playBtn").textContent="▶"}}
 function previousSong(){currentIndex=(currentIndex-1+queue.length)%queue.length;startCurrentSong()}function nextSong(){currentIndex=shuffle?Math.floor(Math.random()*queue.length):(currentIndex+1)%queue.length;startCurrentSong()}function toggleShuffle(){shuffle=!shuffle;document.getElementById("shuffleBtn").style.color=shuffle?"var(--green)":"var(--muted)";toast(shuffle?"Shuffle on":"Shuffle off")}function seek(v){if(audio.duration)audio.currentTime=Number(v)/100*audio.duration}
 function toggleLike(id){let l=liked();l=l.includes(id)?l.filter(x=>x!==id):[...l,id];saveLiked(l);toast(l.includes(id)?"Added to Liked Songs":"Removed from Liked Songs");refreshCurrentPage()}function refreshCurrentPage(){({home:homePage,search:()=>liveSearch(document.getElementById("searchInput").value),library:libraryPage,liked:likedPage,playlists:playlistsPage,history:historyPage,playlist:()=>{}}[currentPage]||homePage)()}
 function openAuth(){document.getElementById("authModal").style.display="grid";showLogin()}function closeAuth(){document.getElementById("authModal").style.display="none"}function showLogin(){authMode="login";document.getElementById("authTitle").textContent="Login";document.getElementById("authName").style.display="none";document.getElementById("authSwitch").innerHTML='New here? <button class="icon-btn" onclick="showSignup()">Create account</button>'}function showSignup(){authMode="signup";document.getElementById("authTitle").textContent="Create account";document.getElementById("authName").style.display="block";document.getElementById("authSwitch").innerHTML='Already have an account? <button class="icon-btn" onclick="showLogin()">Login</button>'}async function submitAuth(){let n=document.getElementById("authName").value.trim(),e=document.getElementById("authEmail").value.trim(),p=document.getElementById("authPassword").value;if(!e||!p)return toast("Enter email and password");try{if(window.TuneStreamCloud&&TuneStreamCloud.enabled()){let r=authMode==="signup"?await TuneStreamCloud.signUp(n,e,p):await TuneStreamCloud.signIn(e,p);let u=r.user||r.session?.user;if(u){localStorage.setItem("tunestream_user",JSON.stringify({name:n||u.user_metadata?.name||e.split("@")[0],email:e,id:u.id}));updateProfile();closeAuth();toast(authMode==="signup"?"Account created":"Logged in");if(authMode==="signup"&&!r.session)toast("Check your email to confirm the account")}return}localStorage.setItem("tunestream_user",JSON.stringify({name:n||e.split("@")[0],email:e}));updateProfile();closeAuth();toast(authMode==="signup"?"Demo account created":"Demo login")}catch(err){toast(err.message||"Authentication failed")}}
