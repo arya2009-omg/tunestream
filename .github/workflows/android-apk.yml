@@ -1,0 +1,40 @@
+name: Build TuneStream Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "spotify-mobile/**"
+      - ".github/workflows/android-apk.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: spotify-mobile
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: spotify-mobile/package-lock.json
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build Android APK
+        run: eas build --platform android --profile preview --non-interactive --wait
+
+      - name: Build summary
+        run: echo "EAS APK build completed. Download the APK from the EAS build output/link above."
