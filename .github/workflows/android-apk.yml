@@ -44,7 +44,34 @@ jobs:
         run: eas init --force --non-interactive --account arya2009-omg
 
       - name: Build Android APK
-        run: eas build --platform android --profile development --non-interactive --wait --verbose-logs --clear-cache
+        run: |
+          set -e
+          eas build --platform android --profile development --non-interactive --wait --verbose-logs --clear-cache --json > eas-build.json
+          cat eas-build.json
+
+      - name: Download built APK
+        run: |
+          set -e
+          BUILD_ID=$(node -e "const fs=require('fs'); const d=JSON.parse(fs.readFileSync('eas-build.json','utf8')); const b=Array.isArray(d)?d[0]:d; if(!b.id) process.exit(1); console.log(b.id)")
+          echo "EAS build ID: $BUILD_ID"
+
+          eas build:view "$BUILD_ID" --json > eas-build-view.json
+          cat eas-build-view.json
+
+          APK_URL=$(node -e "const fs=require('fs'); const d=JSON.parse(fs.readFileSync('eas-build-view.json','utf8')); const b=Array.isArray(d)?d[0]:d; const u=b.artifacts && b.artifacts.buildUrl; if(!u) { console.error('APK build URL not found'); process.exit(1); } console.log(u)")
+          echo "Downloading APK..."
+          mkdir -p artifacts
+          curl -fL "$APK_URL" -o artifacts/TuneStream.apk
+          test -s artifacts/TuneStream.apk
+          ls -lh artifacts/TuneStream.apk
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TuneStream-Android-APK
+          path: spotify-mobile/artifacts/TuneStream.apk
+          if-no-files-found: error
+          retention-days: 14
 
       - name: Build summary
-        run: echo "EAS APK build completed. Download the APK from the EAS build output/link above."
+        run: echo "EAS APK build completed and the APK was uploaded to GitHub Actions artifacts."
