@@ -9,6 +9,8 @@ services:
     envVars:
       - key: JWT_SECRET
         sync: false
+      - key: AUDIUS_API_KEY
+        sync: false
       - key: CLIENT_ORIGIN
         value: "*"
       - key: DATA_DIR
