@@ -269,9 +269,52 @@ function openPlaylist(id){let p=JSON.parse(localStorage.getItem("tunestream_play
 function addToPlaylist(id){let p=JSON.parse(localStorage.getItem("tunestream_playlists")||"{}");if(!p[id])return;let list=songs.map(s=>s.id+". "+s.title+" — "+s.artist).join("\\n");let n=Number(prompt("Choose a song to add:\\n\\n"+list+"\\n\\nEnter song number:"));if(!songs.some(s=>s.id===n))return toast("Invalid song number");if(p[id].songs.includes(n))return toast("Song already in playlist");p[id].songs.push(n);localStorage.setItem("tunestream_playlists",JSON.stringify(p));openPlaylist(id);toast("Song added to playlist 🎵")}
 function deletePlaylist(id){if(!confirm("Delete this playlist?"))return;let p=JSON.parse(localStorage.getItem("tunestream_playlists")||"{}");delete p[id];localStorage.setItem("tunestream_playlists",JSON.stringify(p));playlistsPage()}
 function historyPage(){currentPage="history";setActive("nav-history");let h=history().map(id=>songs.find(s=>s.id===id)).filter(Boolean);document.getElementById("content").innerHTML=`<div class="section-head"><h2>Recently Played</h2></div><div class="rows">${h.length?h.map(createRow).join(""):'<div class="empty">No listening history yet.</div>'}</div>`}
-async function playSongById(id){let i=queue.findIndex(s=>s.id===id);if(i<0)return;currentIndex=i;const s=queue[currentIndex];if(s&&!s.audio){try{toast("Finding music from connected sources…");const jobs=[];if(window.searchJamendoTracks)jobs.push(window.searchJamendoTracks(s.title,5).catch(()=>[]));if(window.searchAudius)jobs.push(window.searchAudius(s.title,5).catch(()=>[]));const results=(await Promise.all(jobs)).flat();const match=results.find(x=>x.audio&&(String(x.title).toLowerCase()===String(s.title).toLowerCase()||String(x.title).toLowerCase().includes(String(s.title).toLowerCase())));if(match){Object.assign(s,match);startCurrentSong();return}}catch(e){}}startCurrentSong()}
-async function startApiListening(){if(!window.searchJamendoTracks)return toast("Music API is not available yet.");try{toast("Loading licensed music…");const list=await window.searchJamendoTracks("hindi",10);if(!list.length)return toast("No licensed online tracks found.");list.forEach(s=>{const i=songs.findIndex(x=>x.id===s.id);if(i<0)songs.push(s)});queue=[...list];currentIndex=0;startCurrentSong()}catch(e){toast("Could not load online music.")}}
+async function resolveOnlineAudio(song){
+  if(!song || song.audio)return song;
+  try{
+    const jobs=[];
+    if(window.searchJamendoTracks)jobs.push(window.searchJamendoTracks(song.title,8).catch(()=>[]));
+    if(window.searchAudius)jobs.push(window.searchAudius(song.title,8).catch(()=>[]));
+    const results=(await Promise.all(jobs)).flat();
+    const title=String(song.title||'').toLowerCase().trim();
+    const artist=String(song.artist||'').toLowerCase().trim();
+    const match=results.find(x=>x?.audio && (String(x.title||'').toLowerCase().trim()===title || String(x.title||'').toLowerCase().includes(title))) || results.find(x=>x?.audio);
+    if(match){Object.assign(song,match);return song;}
+  }catch(e){}
+  return null;
+}
+async function playSongById(id){
+  let i=queue.findIndex(s=>s.id===id);
+  if(i<0)return;
+  currentIndex=i;
+  const s=queue[currentIndex];
+  if(s&&!s.audio){toast('Finding music from connected sources…');await resolveOnlineAudio(s);}
+  await startCurrentSong();
+}
+async function startApiListening(){
+  if(!window.searchJamendoTracks)return toast('Music API is not available yet.');
+  try{
+    toast('Loading licensed music…');
+    const list=await window.searchJamendoTracks('hindi',20);
+    if(!list.length)return toast('No licensed online tracks found.');
+    list.forEach(s=>{if(!songs.some(x=>x.id===s.id))songs.push(s);});
+    queue=[...list];currentIndex=0;await startCurrentSong();
+  }catch(e){toast('Could not load online music.')}
+}
 function addHistory(id){let h=history().filter(x=>x!==id);h.unshift(id);saveHistory(h.slice(0,30))}
+async function startCurrentSong(){
+  let s=queue[currentIndex];if(!s)return;
+  document.getElementById('nowTitle').textContent=s.title;
+  document.getElementById('nowArtist').textContent=s.artist;
+  const art=document.getElementById('nowArt');if(art)art.innerHTML=s.cover?'<img src="'+esc(s.cover)+'" alt="">':(s.emoji||'🎵');
+  progress.value=0;currentTime.textContent='0:00';duration.textContent='0:00';addHistory(s.id);
+  if(!s.audio)await resolveOnlineAudio(s);
+  if(!s.audio){playing=false;document.getElementById('playBtn').textContent='▶';toast('Online audio not found.');return;}
+  audio.pause();audio.src=s.audio;audio.load();
+  try{await audio.play();playing=true;document.getElementById('playBtn').textContent='❚❚';}
+  catch(e){playing=false;document.getElementById('playBtn').textContent='▶';toast('This audio source could not be played.');}
+}
+(id){let h=history().filter(x=>x!==id);h.unshift(id);saveHistory(h.slice(0,30))}
 function startCurrentSong(){let s=queue[currentIndex];if(!s)return;document.getElementById("nowTitle").textContent=s.title;document.getElementById("nowArtist").textContent=s.artist;const art=document.getElementById("nowArt");if(art)art.innerHTML=s.cover?'<img src="'+esc(s.cover)+'" alt="">':(s.emoji||"🎵");progress.value=0;currentTime.textContent="0:00";duration.textContent="0:00";addHistory(s.id);if(!s.audio){playing=false;document.getElementById("playBtn").textContent="▶";toast("No online audio source.");return}audio.pause();audio.src=s.audio;audio.load();audio.play().then(()=>{playing=true;document.getElementById("playBtn").textContent="❚❚"}).catch(()=>{playing=false;document.getElementById("playBtn").textContent="▶";toast("Could not play this audio.")})}
 function togglePlay(){let s=queue[currentIndex];if(!s)return;if(!s.audio)return toast("This track has no online audio source.");if(audio.paused){audio.play();playing=true;document.getElementById("playBtn").textContent="❚❚"}else{audio.pause();playing=false;document.getElementById("playBtn").textContent="▶"}}
 function previousSong(){currentIndex=(currentIndex-1+queue.length)%queue.length;startCurrentSong()}function nextSong(){currentIndex=shuffle?Math.floor(Math.random()*queue.length):(currentIndex+1)%queue.length;startCurrentSong()}function toggleShuffle(){shuffle=!shuffle;document.getElementById("shuffleBtn").style.color=shuffle?"var(--green)":"var(--muted)";toast(shuffle?"Shuffle on":"Shuffle off")}function seek(v){if(audio.duration)audio.currentTime=Number(v)/100*audio.duration}
