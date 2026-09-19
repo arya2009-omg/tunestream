@@ -44,7 +44,7 @@ jobs:
         run: eas init --force --non-interactive --account arya2009-omg
 
       - name: Build Android APK
-        run: eas build --platform android --profile preview --non-interactive --wait --verbose-logs --clear-cache
+        run: eas build --platform android --profile development --non-interactive --wait --verbose-logs --clear-cache
 
       - name: Build summary
         run: echo "EAS APK build completed. Download the APK from the EAS build output/link above."
