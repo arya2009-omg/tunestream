@@ -1,4 +1,4 @@
-import{create}from"zustand";import{createAudioPlayer,setAudioModeAsync,AudioPlayer}from"expo-audio";import{SERVER_URL}from"@/lib/api";
+import{create}from"zustand";import{createAudioPlayer,setAudioModeAsync}from"expo-audio";import type{AudioPlayer}from"expo-audio";import{SERVER_URL}from"@/lib/api";
 export interface Song{_id:string;title:string;artist:string;album?:string;audioUrl:string;coverImage?:string}
 interface State{currentSong:Song|null;queue:Song[];isPlaying:boolean;shuffle:boolean;repeat:"off"|"all"|"one";position:number;duration:number;player:AudioPlayer|null;playSong:(s:Song,q?:Song[])=>Promise<void>;togglePlay:()=>Promise<void>;next:()=>Promise<void>;prev:()=>Promise<void>;seek:(ms:number)=>Promise<void>;toggleShuffle:()=>void;toggleRepeat:()=>void}
 let timer:ReturnType<typeof setInterval>|null=null;
