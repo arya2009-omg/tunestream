@@ -65,3 +65,38 @@ document.addEventListener('click',function(e){if(!e.target.closest('.context-men
   if(oldHome)window.homePage=function(){oldHome();setTimeout(addUpgradeUI,0);};
   window.addEventListener('load',function(){setTimeout(addUpgradeUI,250);});
 })();
+
+/* Authorized music API entry point */
+(function(){
+  const oldBrowse = window.browsePage;
+  window.browsePage = function(){
+    if(typeof oldBrowse === "function") oldBrowse();
+    const content = document.getElementById("content");
+    if(!content) return;
+    const section = content.querySelector(".browse-grid");
+    if(section && !document.getElementById("apiMusicBrowseCard")){
+      const card = document.createElement("div");
+      card.className = "browse-pill";
+      card.id = "apiMusicBrowseCard";
+      card.innerHTML = '🌐 API Music<small>Search & play authorized tracks</small>';
+      card.onclick = function(){ apiMusicPage("hindi"); };
+      section.appendChild(card);
+    }
+  };
+  window.addEventListener("load", function(){
+    setTimeout(function(){
+      if(typeof window.homePage !== "function") return;
+      const oldHome = window.homePage;
+      window.homePage = function(){
+        oldHome();
+        const c=document.getElementById("content");
+        if(!c || c.querySelector("#apiMusicHomeCard")) return;
+        const box=document.createElement("div");
+        box.className="feature-strip";
+        box.innerHTML='<div id="apiMusicHomeCard" class="feature" onclick="apiMusicPage(\'hindi\')">🌐 Authorized Music API<p>Search and play music from the connected API source.</p></div>';
+        const h=[...c.querySelectorAll(".section-head")].pop();
+        if(h) h.insertAdjacentElement("afterend",box);
+      };
+    },0);
+  });
+})();
