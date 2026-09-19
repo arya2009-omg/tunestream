@@ -1,1 +1,44 @@
-{"expo":{"name":"TuneStream","slug":"tunestream-mobile","version":"1.0.0","orientation":"portrait","scheme":"tunestream","userInterfaceStyle":"dark","plugins":["expo-router",["expo-audio",{"enableBackgroundPlayback":true}],"expo-document-picker"],"ios":{"supportsTablet":true,"bundleIdentifier":"com.tunestream.mobile"},"android":{"package":"com.tunestream.mobile","adaptiveIcon":{"backgroundColor":"#191414"}}}}
+{
+  "expo": {
+    "name": "TuneStream",
+    "slug": "tunestream-mobile",
+    "version": "1.0.0",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/0687dd9f-ab24-4b6e-8da2-a8a63dfde4ef",
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 0
+    },
+    "orientation": "portrait",
+    "scheme": "tunestream",
+    "userInterfaceStyle": "dark",
+    "plugins": [
+      "expo-router",
+      [
+        "expo-audio",
+        {
+          "enableBackgroundPlayback": true
+        }
+      ],
+      "expo-document-picker",
+      "expo-updates"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.tunestream.mobile"
+    },
+    "android": {
+      "package": "com.tunestream.mobile",
+      "adaptiveIcon": {
+        "backgroundColor": "#191414"
+      }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "0687dd9f-ab24-4b6e-8da2-a8a63dfde4ef"
+      }
+    }
+  }
+}
