@@ -1,0 +1,10 @@
+[
+  {"_id":"demo-1","title":"Midnight Drive","artist":"TuneStream","album":"Night City","genre":"Electronic","audioUrl":"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3","coverImage":"","createdAt":"2026-01-01T00:00:00.000Z"},
+  {"_id":"demo-2","title":"Neon Nights","artist":"TuneStream","album":"Night City","genre":"Electronic","audioUrl":"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3","coverImage":"","createdAt":"2026-01-02T00:00:00.000Z"},
+  {"_id":"demo-3","title":"Afterglow","artist":"TuneStream","album":"Afterglow","genre":"Chill","audioUrl":"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3","coverImage":"","createdAt":"2026-01-03T00:00:00.000Z"},
+  {"_id":"demo-4","title":"City Lights","artist":"TuneStream","album":"City Lights","genre":"Pop","audioUrl":"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3","coverImage":"","createdAt":"2026-01-04T00:00:00.000Z"},
+  {"_id":"demo-5","title":"Ocean Dreams","artist":"Nova","album":"Blue","genre":"Ambient","audioUrl":"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3","coverImage":"","createdAt":"2026-01-05T00:00:00.000Z"},
+  {"_id":"demo-6","title":"Lost Stars","artist":"Aria","album":"Universe","genre":"Pop","audioUrl":"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3","coverImage":"","createdAt":"2026-01-06T00:00:00.000Z"},
+  {"_id":"demo-7","title":"Sunset Boulevard","artist":"Nova","album":"Summer","genre":"Chill","audioUrl":"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3","coverImage":"","createdAt":"2026-01-07T00:00:00.000Z"},
+  {"_id":"demo-8","title":"Electric Heart","artist":"Aria","album":"Pulse","genre":"Dance","audioUrl":"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3","coverImage":"","createdAt":"2026-01-08T00:00:00.000Z"}
+]
