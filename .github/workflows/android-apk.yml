@@ -31,6 +31,9 @@ jobs:
       - name: Validate Expo project
         run: npx expo-doctor@latest
 
+      - name: Verify production JS bundle
+        run: npx expo export --platform android
+
       - name: Setup EAS
         uses: expo/expo-github-action@v8
         with:
@@ -41,7 +44,7 @@ jobs:
         run: eas init --force --non-interactive --account arya2009-omg
 
       - name: Build Android APK
-        run: eas build --platform android --profile preview --non-interactive --wait --verbose-logs
+        run: eas build --platform android --profile preview --non-interactive --wait --verbose-logs --clear-cache
 
       - name: Build summary
         run: echo "EAS APK build completed. Download the APK from the EAS build output/link above."
