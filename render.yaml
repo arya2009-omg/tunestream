@@ -2,7 +2,7 @@ services:
   - type: web
     name: tunestream-api
     runtime: node
-    rootDir: server
+    rootDir: .
     buildCommand: npm install
     startCommand: npm start
     healthCheckPath: /health
