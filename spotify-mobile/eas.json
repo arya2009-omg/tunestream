@@ -2,12 +2,15 @@
   "build": {
     "preview": {
       "distribution": "internal",
+      "channel": "preview",
       "android": {
         "buildType": "apk"
       },
       "node": "22.13.0"
     },
-    "production": {}
+    "production": {
+      "channel": "production"
+    }
   },
   "cli": {
     "appVersionSource": "remote"
