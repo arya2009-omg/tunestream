@@ -15,6 +15,19 @@
     "production": {
       "channel": "production",
       "environment": "production"
+    },
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "channel": "development",
+      "environment": "preview",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://tunestream-fth1.onrender.com"
+      },
+      "android": {
+        "buildType": "apk"
+      },
+      "node": "22.13.0"
     }
   },
   "cli": {
