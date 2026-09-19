@@ -4,7 +4,8 @@ window.dailyMixPage=function(){featureList('Daily Mixes','Mood based mixes ready
 window.releaseRadarPage=function(){featureList('Release Radar','New demo releases from artists you like.',[songs[4],songs[5],songs[7]])}
 window.blendPage=function(){featureList('Blend','A shared style mix from your music.',songs.slice().sort(function(){return Math.random()-.5}).slice(0,6))}
 window.filterMusic=function(tag){var map={Chill:[5,3,4],Focus:[6,1,3],Workout:[8,7,4],Party:[2,7,8]};featureList(tag,'Browse by mood.',map[tag].map(function(id){return songs.find(function(s){return s.id===id})}))}
-window.browsePage=function(){currentPage='browse';setActive(null);document.getElementById('content').innerHTML='<div class="section-head"><h2>Browse</h2><span class="muted">Genres, moods and activities</span></div><div class="browse-grid"><div class="browse-pill" onclick="filterMusic(\'Chill\')">Chill<small>Relax and night</small></div><div class="browse-pill" onclick="filterMusic(\'Focus\')">Focus<small>Study and coding</small></div><div class="browse-pill" onclick="filterMusic(\'Workout\')">Workout<small>Energy</small></div><div class="browse-pill" onclick="filterMusic(\'Party\')">Party<small>Dance</small></div></div>'}
+window.browsePage=function(){currentPage='browse';setActive('nav-browse');document.getElementById('content').innerHTML='<div class="section-head"><div><h2>Browse</h2><span class="muted">Genres, moods and activities</span></div></div><section class="hero" style="padding:28px"><div class="muted">TUNESTREAM • BROWSE</div><h1>Explore music.</h1><p>Choose a Hindi music category or search authorized online tracks.</p></section><div class="section-head"><h2>🇮🇳 Hindi Music</h2></div><div class="browse-grid"><div class="browse-pill" onclick="apiMusicPage(\'hindi\')">🌐 API Music<small>Authorized online tracks</small></div><div class="browse-pill" onclick="hindiSongsPage()">🎵 All Hindi Songs<small>Full catalog</small></div><div class="browse-pill" onclick="hindiSongsPage(\'Romantic\')">❤️ Romantic<small>Love songs</small></div><div class="browse-pill" onclick="hindiSongsPage(\'Sad\')">🥀 Sad<small>Emotional tracks</small></div><div class="browse-pill" onclick="hindiSongsPage(\'Trending\')">🔥 Trending<small>Popular picks</small></div><div class="browse-pill" onclick="hindiSongsPage(\'Party\')">🎉 Party<small>Dance music</small></div><div class="browse-pill" onclick="hindiSongsPage(\'Pop\')">🎧 Hindi Pop<small>Pop & indie</small></div><div class="browse-pill" onclick="hindiSongsPage(\'Chill\')">🌙 Chill<small>Relax & travel</small></div><div class="browse-pill" onclick="hindiSongsPage(\'Bhakti\')">🙏 Bhakti<small>Devotional</small></div><div class="browse-pill" onclick="filterMusic(\'Focus\')">🧠 Focus<small>Study & coding</small></div><div class="browse-pill" onclick="filterMusic(\'Workout\')">⚡ Workout<small>Energy</small></div></div>'}
+
 window.queuePage=function(){currentPage='queue';setActive(null);document.getElementById('content').innerHTML='<div class="section-head"><h2>Queue</h2><button class="secondary" onclick="queue=[...songs];queuePage()">Reset Queue</button></div><div class="queue-panel">'+queue.map(function(s,i){return '<div class="queue-item"><span class="muted">'+(i+1)+'</span><span style="flex:1"><b>'+esc(s.title)+'</b><small class="muted" style="display:block">'+esc(s.artist)+'</small></span><button class="icon-btn" onclick="playSongById('+s.id+')">Play</button></div>'}).join('')+'</div>'}
 window.wrappedPage=function(){var h=history().map(function(id){return songs.find(function(s){return s.id===id})}).filter(Boolean);currentPage='wrapped';setActive(null);document.getElementById('content').innerHTML='<section class="hero"><div class="muted">YOUR TUNESTREAM WRAPPED</div><h1>Your listening story</h1><p>You played <b>'+h.length+'</b> recent tracks. Your history is saved on this device.</p><button class="primary" onclick="featureList(\'Top Tracks\',\'From your recent history.\',songs.slice(0,5))">View Top Tracks</button></section>'}
 window.settingsPage=function(){currentPage='settings';setActive(null);document.getElementById('content').innerHTML='<div class="section-head"><h2>Settings</h2></div><div class="queue-panel"><div class="setting-row"><span>Auto Update</span><span class="muted">Enabled</span></div><div class="setting-row"><span>Connection</span><span class="muted">'+(navigator.onLine?'Online':'Offline')+'</span></div><div class="setting-row"><span>Storage</span><button class="secondary" onclick="clearTuneData()">Clear local data</button></div></div>'}
@@ -71,17 +72,6 @@ document.addEventListener('click',function(e){if(!e.target.closest('.context-men
   const oldBrowse = window.browsePage;
   window.browsePage = function(){
     if(typeof oldBrowse === "function") oldBrowse();
-    const content = document.getElementById("content");
-    if(!content) return;
-    const section = content.querySelector(".browse-grid");
-    if(section && !document.getElementById("apiMusicBrowseCard")){
-      const card = document.createElement("div");
-      card.className = "browse-pill";
-      card.id = "apiMusicBrowseCard";
-      card.innerHTML = '🌐 API Music<small>Search & play authorized tracks</small>';
-      card.onclick = function(){ apiMusicPage("hindi"); };
-      section.appendChild(card);
-    }
   };
   window.addEventListener("load", function(){
     setTimeout(function(){
