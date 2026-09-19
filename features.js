@@ -15,3 +15,53 @@ window.hideContext=function(){var m=document.getElementById('contextMenu');if(m)
 document.addEventListener('contextmenu',function(e){var el=e.target.closest('.card,.row');if(!el)return;var n=el.querySelector('.row-title,h3');if(!n)return;var s=songs.find(function(x){return x.title===n.textContent.trim()});if(s)showContext(e,s.id)})
 document.addEventListener('click',function(e){if(!e.target.closest('.context-menu'))hideContext()})
 (function(){var old=window.homePage;window.homePage=function(){old();var content=document.getElementById('content');var hero=content.querySelector('.hero');if(hero&&!content.querySelector('.feature-strip')){var box=document.createElement('div');box.innerHTML='<div class="section-head"><h2>Made For You</h2><span class="muted">Personalized features</span></div><div class="feature-strip"><div class="feature" onclick="discoverPage()">Discover Weekly</div><div class="feature" onclick="dailyMixPage()">Daily Mixes</div><div class="feature" onclick="releaseRadarPage()">Release Radar</div><div class="feature" onclick="blendPage()">Blend</div></div><div class="section-head"><h2>Browse by Mood</h2></div><div class="browse-grid"><div class="browse-pill" onclick="filterMusic(\'Chill\')">Chill</div><div class="browse-pill" onclick="filterMusic(\'Focus\')">Focus</div><div class="browse-pill" onclick="filterMusic(\'Workout\')">Workout</div><div class="browse-pill" onclick="filterMusic(\'Party\')">Party</div></div>';hero.insertAdjacentElement('afterend',box)}}})();
+
+/* TuneStream web upgrade pack — responsive polish + player shortcuts */
+(function(){
+  var style=document.createElement('style');
+  style.textContent='
+    .ts-upgrade-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 22px}
+    .ts-chip{border:1px solid var(--border);background:var(--panel);color:var(--text);padding:9px 13px;border-radius:999px;cursor:pointer;font-size:13px}
+    .ts-chip:hover{background:var(--panel2);border-color:#354047}
+    .ts-shortcuts{margin-top:14px;padding:12px 14px;border:1px solid var(--border);border-radius:12px;background:rgba(18,22,26,.72);color:var(--muted);font-size:12px}
+    .ts-shortcuts kbd{padding:2px 6px;border:1px solid #394249;border-radius:5px;background:#0c1013;color:var(--text)}
+    .card,.feature,.browse-pill,.mini-stat,.mood{border:1px solid transparent}
+    .card:hover,.feature:hover,.browse-pill:hover,.mini-stat:hover,.mood:hover{border-color:#303a40}
+    @media(max-width:800px){.ts-upgrade-bar{margin-bottom:16px}.ts-chip{padding:8px 11px}.ts-shortcuts{font-size:11px}}
+  ';
+  document.head.appendChild(style);
+  function safePlayRandom(){
+    if(!window.songs||!songs.length)return;
+    var s=songs[Math.floor(Math.random()*songs.length)];
+    if(s&&typeof playSongById==='function'){playSongById(s.id);if(typeof toast==='function')toast('✨ Playing a surprise pick');}
+  }
+  function addUpgradeUI(){
+    var c=document.getElementById('content'); if(!c)return;
+    var hero=c.querySelector('.home-hero');
+    if(hero&&!c.querySelector('.ts-upgrade-bar')){
+      var bar=document.createElement('div');bar.className='ts-upgrade-bar';
+      bar.innerHTML='<button class="ts-chip" onclick="safeTuneStreamSurprise()">✨ Surprise me</button><button class="ts-chip" onclick="queuePage()">☰ Queue</button><button class="ts-chip" onclick="wrappedPage()">📊 Listening history</button>';
+      hero.insertAdjacentElement('afterend',bar);
+    }
+  }
+  window.safeTuneStreamSurprise=safePlayRandom;
+  document.addEventListener('dblclick',function(e){
+    var el=e.target.closest('.card,.row'); if(!el||!window.songs)return;
+    var n=el.querySelector('.row-title,h3'); if(!n)return;
+    var s=songs.find(function(x){return x.title===n.textContent.trim()});
+    if(s&&typeof playSongById==='function')playSongById(s.id);
+  });
+  document.addEventListener('keydown',function(e){
+    if(e.target&&/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;
+    if(e.code==='Space'){e.preventDefault();if(typeof togglePlay==='function')togglePlay();}
+    else if(e.key==='ArrowRight'&&typeof audio!=='undefined'&&audio.duration)audio.currentTime=Math.min(audio.duration,audio.currentTime+5);
+    else if(e.key==='ArrowLeft'&&typeof audio!=='undefined')audio.currentTime=Math.max(0,audio.currentTime-5);
+    else if(e.key.toLowerCase()==='n'&&typeof nextSong==='function')nextSong();
+    else if(e.key.toLowerCase()==='p'&&typeof prevSong==='function')prevSong();
+  });
+  window.addEventListener('online',function(){if(typeof toast==='function')toast('🟢 Back online');});
+  window.addEventListener('offline',function(){if(typeof toast==='function')toast('🔴 You are offline');});
+  var oldHome=window.homePage;
+  if(oldHome)window.homePage=function(){oldHome();setTimeout(addUpgradeUI,0);};
+  window.addEventListener('load',function(){setTimeout(addUpgradeUI,250);});
+})();
