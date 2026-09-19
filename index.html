@@ -164,107 +164,8 @@ html.device-mobile .row>span{display:none}
 html.device-mobile .volume{display:none}
 html.device-mobile .now{width:34%;min-width:0}
 html.device-mobile .controls{gap:5px}
-<style>
-/* Final responsive shell: phone = 3-dot menu, readable sizing */
-@media (pointer:coarse) and (max-width:1400px){
-  html.device-mobile .sidebar,
-  html.device-mobile .nav{display:none!important}
-  html.device-mobile .mobile-menu-btn{display:grid!important;position:fixed!important;left:10px!important;top:8px!important;width:42px!important;height:42px!important;font-size:25px!important;z-index:999!important}
-  html.device-mobile .main{margin-left:0!important;width:100%!important;max-width:100vw!important;padding:68px 14px 126px!important}
-  html.device-mobile .topbar{left:0!important;right:0!important;width:100vw!important;padding-left:62px!important}
-  html.device-mobile #onlineBadge{top:62px!important;right:12px!important;font-size:11px!important;opacity:.9}
-  html.device-mobile .content{width:100%}
-  html.device-mobile .home-hero{padding:28px 20px!important}
-  html.device-mobile .home-hero h1{font-size:clamp(34px,9vw,44px)!important}
-  html.device-mobile .home-hero p{font-size:14px!important}
-  html.device-mobile .section-head h2{font-size:21px!important}
-  html.device-mobile .section-sub{font-size:13px!important}
-  html.device-mobile .card h3{font-size:15px!important}
-  html.device-mobile .card p{font-size:12px!important}
-  html.device-mobile .feature{font-size:15px!important;padding:16px!important}
-  html.device-mobile .feature p{font-size:12px!important}
-  html.device-mobile .mood{font-size:15px!important}
-  html.device-mobile .row-title{font-size:14px!important}
-  html.device-mobile .row-sub{font-size:11px!important}
-  html.device-mobile .drawer-item{font-size:15px!important;padding:14px 12px!important}
-  html.device-mobile .mobile-drawer{width:min(340px,88vw)!important;padding:18px 14px!important}
-  html.device-mobile .mobile-drawer h2{font-size:22px!important}
-}
-@media (max-width:800px){
-  .mobile-menu-btn{display:grid!important}
-}
-</style></style><style>
-/* Phone UI sizing — never squeeze desktop into a phone */
-@media (pointer:coarse) and (max-width:1400px){
-  html,body{font-size:16px!important;-webkit-text-size-adjust:100%!important;text-size-adjust:100%!important;overflow-x:hidden!important}
-  .sidebar{display:none!important}
-  .mobile-menu-btn{display:grid!important;position:fixed!important;left:10px!important;top:8px!important;width:44px!important;height:44px!important;font-size:25px!important;z-index:999!important}
-  .main{margin-left:0!important;width:100%!important;max-width:100vw!important;padding:68px 14px 132px!important}
-  .topbar{position:fixed!important;left:0!important;right:0!important;top:0!important;width:100vw!important;height:58px!important;margin:0!important;padding:8px 12px 8px 62px!important;z-index:998!important}
-  .search{max-width:none!important;width:100%!important}
-  .search input{height:44px!important;font-size:16px!important;padding:10px 14px 10px 40px!important}
-  .profile{display:none!important}
-  #onlineBadge{top:64px!important;right:12px!important;font-size:11px!important}
-  .home-hero{padding:28px 20px!important;min-height:300px!important;border-radius:18px!important}
-  .home-hero h1{font-size:clamp(36px,9vw,48px)!important;line-height:1.08!important}
-  .home-hero p{font-size:15px!important;line-height:1.6!important}
-  .quick-actions button,.primary,.secondary{font-size:15px!important;padding:12px 17px!important}
-  .home-stats{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important}
-  .mini-stat{padding:12px 10px!important;font-size:13px!important}
-  .mini-stat b{font-size:17px!important}
-  .section-head{margin:28px 0 14px!important}
-  .section-head h2{font-size:24px!important}
-  .section-sub{font-size:13px!important}
-  .cards{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important}
-  .card{padding:11px!important;border-radius:12px!important}
-  .cover{font-size:44px!important}
-  .card h3{font-size:15px!important;line-height:1.3!important}
-  .card p{font-size:12px!important}
-  .feature-strip{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
-  .feature{padding:16px 13px!important;font-size:15px!important}
-  .feature p{font-size:12px!important;line-height:1.45!important}
-  .browse-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
-  .browse-pill,.mood{font-size:15px!important;padding:17px 14px!important}
-  .row{grid-template-columns:46px 1fr auto!important;min-height:68px!important;padding:11px 10px!important;gap:10px!important}
-  .row-cover{width:46px!important;height:46px!important}
-  .row-title{font-size:14px!important}
-  .row-sub{font-size:11px!important}
-  .row>span{display:none!important}
-  .player{left:0!important;right:0!important;bottom:56px!important;width:100vw!important;height:72px!important;padding:8px 10px!important}
-  .now-art{width:50px!important;height:50px!important;min-width:50px!important}
-  .now strong{font-size:14px!important}.now small{font-size:11px!important}
-  .controls{gap:5px!important}.circle{width:40px!important;height:40px!important}
-  .volume{display:none!important}
-  .bottom-nav{display:flex!important;left:0!important;right:0!important;width:100vw!important;height:56px!important}
-  .bottom-nav button{font-size:13px!important;min-width:64px!important}
-  .mobile-drawer{width:min(340px,88vw)!important}
-  .drawer-item{font-size:15px!important;padding:14px 12px!important}
-  .mobile-drawer h2{font-size:22px!important}
-  .modal{font-size:16px!important}
-}
-</style><style>
-/* Lock the phone app shell: vertical scrolling only, no horizontal movement */
-html,body{overflow-x:clip!important;overscroll-behavior-x:none!important;max-width:100%!important}
-body{position:relative;left:0!important;right:0!important}
-@media (pointer:coarse) and (max-width:1400px){
-  html,body{width:100%!important;min-width:0!important;max-width:100vw!important;overflow-x:clip!important;overscroll-behavior-x:none!important}
-  .app{width:100%!important;max-width:100vw!important;overflow-x:clip!important}
-  .main{width:100%!important;max-width:100vw!important;margin-left:0!important;overflow-x:clip!important}
-  .topbar,.player,.bottom-nav{max-width:100vw!important;overflow:hidden!important}
-  .home-hero,.home-stats,.cards,.feature-strip,.browse-grid,.mood-row,.rows{width:100%!important;max-width:100%!important}
-  .mobile-drawer-bg{width:100vw!important;max-width:100vw!important;overflow:hidden!important}
-  .mobile-drawer{max-width:88vw!important}
-  img,video,canvas,iframe{max-width:100%!important}
-}
-</style><style>
-/* Hard-lock phone viewport: prevent accidental page zoom */
-@media (pointer:coarse) and (max-width:1400px){
-  html,body{touch-action:pan-y!important}
-  body{overscroll-behavior-x:none!important}
-  input,button,.search,.profile,.card,.row,.feature,.mood,.bottom-nav,.player{touch-action:manipulation!important}
-}
 </style></head>
-<body><button class="mobile-menu-btn" onclick="openMobileMenu()" aria-label="Open menu">⋮</button><div class="mobile-drawer-bg" id="mobileDrawerBg" onclick="closeMobileMenu(event)"><div class="mobile-drawer" onclick="event.stopPropagation()"><button class="drawer-item" onclick="closeMobileMenu()">✕ Close</button><h2>☰ TuneStream</h2><button class="drawer-item" onclick="homePage();closeMobileMenu()">🏠 Home</button><button class="drawer-item" onclick="searchPage();closeMobileMenu()">🔎 Search</button><button class="drawer-item" onclick="cloudLibraryPage();closeMobileMenu()">📚 Your Library</button><button class="drawer-item" onclick="likedPage();closeMobileMenu()">❤️ Liked Songs</button><button class="drawer-item" onclick="playlistsPage();closeMobileMenu()">🎵 Playlists</button><button class="drawer-item" onclick="historyPage();closeMobileMenu()">🕘 Recently Played</button><button class="drawer-item" onclick="browsePage();closeMobileMenu()">🧭 Browse</button><button class="drawer-item" onclick="friendsPage();closeMobileMenu()">👥 Friends</button><button class="drawer-item" onclick="blendCloudPage();closeMobileMenu()">🔀 Blend</button><button class="drawer-item" onclick="jamCloudPage();closeMobileMenu()">🎧 Jam</button><button class="drawer-item" onclick="activityPage();closeMobileMenu()">📰 Friend Activity</button><button class="drawer-item" onclick="notificationsPage();closeMobileMenu()">🔔 Notifications <span id="mobileNotifBadge" class="notif-badge" style="display:none">0</span></button><button class="drawer-item" onclick="wrappedPage();closeMobileMenu()">✨ Your Wrapped</button><button class="drawer-item" onclick="queuePage();closeMobileMenu()">📋 Queue</button><button class="drawer-item" onclick="accountPage();closeMobileMenu()">👤 Account</button><button class="drawer-item" onclick="openAuth();closeMobileMenu()">🔐 Login / Sign up</button><button class="drawer-item" onclick="downloadTuneStream();closeMobileMenu()">⬇️ Download</button><div class="settings-section"><h3>⚙️ Settings</h3><button class="drawer-item" onclick="toast(navigator.onLine?'You are online':'You are offline')">🌐 Connection Status</button><button class="drawer-item" onclick="toast('Auto-update is enabled')">🔄 Auto Update</button><button class="drawer-item" onclick="toast('TuneStream PWA is ready to install')">📲 App / PWA</button><button class="drawer-item" onclick="toast('Your preferences are saved on this device')">💾 Storage</button><button class="drawer-item" onclick="settingsPage();closeMobileMenu()">⚙️ Full Settings</button></div></div></div><div id="onlineBadge" style="position:fixed;top:14px;right:18px;z-index:20;background:#12161a;border:1px solid #252b30;padding:7px 11px;border-radius:18px;font-size:12px;color:#1ed760">● ONLINE DEMO</div><div class="app"><aside class="sidebar"><div class="logo">Tune<span>Stream</span></div><nav class="nav">
+<body><button class="mobile-menu-btn" onclick="openMobileMenu()" aria-label="Open menu">⋮</button><div class="mobile-drawer-bg" id="mobileDrawerBg" onclick="closeMobileMenu(event)"><div class="mobile-drawer" onclick="event.stopPropagation()"><button class="drawer-item" onclick="closeMobileMenu()">✕ Close</button><h2>☰ TuneStream</h2><button class="drawer-item" onclick="homePage();closeMobileMenu()">🏠 Home</button><button class="drawer-item" onclick="searchPage();closeMobileMenu()">🔎 Search</button><button class="drawer-item" onclick="cloudLibraryPage();closeMobileMenu()">📚 Your Library</button><button class="drawer-item" onclick="likedPage();closeMobileMenu()">❤️ Liked Songs</button><button class="drawer-item" onclick="playlistsPage();closeMobileMenu()">🎵 Playlists</button><button class="drawer-item" onclick="historyPage();closeMobileMenu()">🕘 Recently Played</button><button class="drawer-item" onclick="browsePage();closeMobileMenu()">🧭 Browse</button><button class="drawer-item" onclick="friendsPage();closeMobileMenu()">👥 Friends</button><button class="drawer-item" onclick="blendCloudPage();closeMobileMenu()">🔀 Blend</button><button class="drawer-item" onclick="jamCloudPage();closeMobileMenu()">🎧 Jam</button><button class="drawer-item" onclick="activityPage();closeMobileMenu()">📰 Friend Activity</button><button class="drawer-item" onclick="notificationsPage();closeMobileMenu()">🔔 Notifications <span id="mobileNotifBadge" class="notif-badge" style="display:none">0</span></button><button class="drawer-item" onclick="wrappedPage();closeMobileMenu()">✨ Your Wrapped</button><button class="drawer-item" onclick="queuePage();closeMobileMenu()">📋 Queue</button><button class="drawer-item" onclick="accountPage();closeMobileMenu()">👤 Account</button><div class="settings-section"><h3>⚙️ Settings</h3><button class="drawer-item" onclick="toast(navigator.onLine?'You are online':'You are offline')">🌐 Connection Status</button><button class="drawer-item" onclick="toast('Auto-update is enabled')">🔄 Auto Update</button><button class="drawer-item" onclick="toast('TuneStream PWA is ready to install')">📲 App / PWA</button><button class="drawer-item" onclick="toast('Your preferences are saved on this device')">💾 Storage</button><button class="drawer-item" onclick="settingsPage();closeMobileMenu()">⚙️ Full Settings</button></div></div></div><div id="onlineBadge" style="position:fixed;top:14px;right:18px;z-index:20;background:#12161a;border:1px solid #252b30;padding:7px 11px;border-radius:18px;font-size:12px;color:#1ed760">● ONLINE DEMO</div><div class="app"><aside class="sidebar"><div class="logo">Tune<span>Stream</span></div><nav class="nav">
 <button id="nav-home" onclick="homePage()">🏠 Home</button><button id="nav-search" onclick="searchPage()">🔎 Search</button><button id="nav-library" onclick="cloudLibraryPage()">📚 Your Library</button><button id="nav-liked" onclick="likedPage()">❤️ Liked Songs</button><button id="nav-playlists" onclick="playlistsPage()">🎵 Playlists</button><button id="nav-history" onclick="historyPage()">🕘 Recently Played</button><button id="nav-browse" onclick="browsePage()">🧭 Browse</button><button id="nav-friends" onclick="friendsPage()">👥 Friends</button><button id="nav-notifications" onclick="notificationsPage()">🔔 Notifications <span id="desktopNotifBadge" class="notif-badge" style="display:none">0</span></button><button id="nav-blend" onclick="blendCloudPage()">🔀 Blend</button><button id="nav-account" onclick="accountPage()">👤 Account</button><button id="nav-jam" onclick="jamCloudPage()">🎧 Jam</button><button id="nav-wrapped" onclick="wrappedPage()">✨ Wrapped</button><button id="nav-queue" onclick="queuePage()">📋 Queue</button><button id="nav-login" class="login" onclick="openAuth()">👤 Login</button><button id="nav-download" class="login" style="display:none" onclick="downloadTuneStream()">⬇️ Download</button>
 </nav></aside><main class="main"><div class="topbar"><div class="search"><span class="search-icon">🔎</span><input id="searchInput" placeholder="What do you want to play?" oninput="liveSearch(this.value)"></div><button id="installAppBtn" class="install-app" onclick="installTuneStream()" aria-label="Install TuneStream">📲 Install App</button><div class="profile"><label class="avatar" id="avatar" for="profilePhotoInput" style="cursor:pointer;overflow:hidden" title="Change profile photo">G</label><input id="profilePhotoInput" type="file" accept="image/*" style="display:none" onchange="changeProfilePhoto(event)"><span id="profileName" onclick="accountPage()" style="cursor:pointer">Guest</span></div></div><div id="content"></div></main></div>
 <div class="player"><div class="now-art" id="nowArt" onclick="openNowPlaying(event)">🎵</div><div class="now" onclick="openNowPlaying(event)"><strong id="nowTitle">No song selected</strong><small id="nowArtist">Choose a song to start</small></div><div class="controls"><button class="icon-btn" onclick="previousSong()">⏮</button><button class="circle" id="playBtn" onclick="togglePlay()">▶</button><button class="icon-btn" onclick="nextSong()">⏭</button><button class="icon-btn" onclick="toggleShuffle()" id="shuffleBtn">🔀</button></div><div class="progress-wrap"><small id="currentTime">0:00</small><input class="progress" id="progress" type="range" min="0" max="100" value="0" oninput="seek(this.value)"><small id="duration">0:00</small></div><input class="volume" id="volume" type="range" min="0" max="1" step=".01" value=".8" oninput="audio.volume=this.value"></div>
@@ -600,18 +501,5 @@ window.homePage=professionalHome;
   applyDeviceMode();
   window.addEventListener("resize",applyDeviceMode,{passive:true});
   window.addEventListener("orientationchange",function(){setTimeout(applyDeviceMode,100);},{passive:true});
-})();
-</script><script>
-/* Prevent browser double-tap / gesture zoom inside the app shell */
-(function(){
-  let lastTap=0;
-  document.addEventListener("touchend",function(e){
-    const now=Date.now();
-    if(now-lastTap<300 && e.cancelable) e.preventDefault();
-    lastTap=now;
-  },{passive:false});
-  document.addEventListener("gesturestart",e=>{if(e.cancelable)e.preventDefault()},{passive:false});
-  document.addEventListener("gesturechange",e=>{if(e.cancelable)e.preventDefault()},{passive:false});
-  document.addEventListener("gestureend",e=>{if(e.cancelable)e.preventDefault()},{passive:false});
 })();
 </script></body></html>
